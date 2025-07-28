@@ -67,8 +67,6 @@ Sistema de Publicación de Artículos
 
 ## 🚀 Instalación y Ejecución
 
-## 🚀 Instalación y Ejecución
-
 1. **Clona el repositorio:**
     ```bash
     git clone https://github.com/wmarcia86/SiPubArt.git
