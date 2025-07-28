@@ -66,6 +66,8 @@ Sistema de Publicación de Artículos
 
 ## 🚀 Instalación y Ejecución
 
+## 🚀 Instalación y Ejecución
+
 1. **Clona el repositorio:**
     ```bash
     git clone https://github.com/wmarcia86/SiPubArt.git
@@ -78,29 +80,35 @@ Sistema de Publicación de Artículos
     - Inicia **Visual Studio 2022** o superior.
     - Haz clic en **Archivo > Abrir > Solución o proyecto...**
     - Selecciona el archivo `SiPubArt.sln` en la raíz del repositorio.
-4. **Restaura las dependencias:**
+4. **Configura los proyectos de inicio múltiple:**
+    - Haz clic derecho sobre la solución en el **Explorador de soluciones** y selecciona **Propiedades de la solución**.
+    - Ve a la sección __Propiedades comunes > Configurar Proyectos de inicio__.
+    - Selecciona la opción **Varios proyectos de inicio** (__Multiple startup projects__).
+    - Verifica y selecciona el perfil __Startup profile.
+    - Haz clic en **Aceptar** para guardar los cambios.
+5. **Restaura las dependencias:**
     - Visual Studio restaurará automáticamente los paquetes al abrir la solución.
     - O bien, puedes ejecutar:
     ```bash
     dotnet restore
     ```
-5. **Aplica las migraciones e inicializa la base de datos:**
+6. **Aplica las migraciones e inicializa la base de datos:**
     - **Opción automática (recomendada):** Al ejecutar la aplicación, las migraciones pendientes se aplican automáticamente y la base de datos se inicializa sin intervención manual.
     - **Opción manual:** Si prefieres hacerlo manualmente antes de ejecutar la aplicación, puedes usar:
     ```bash
     dotnet ef database update
     ```
-6. **Ejecuta la aplicación:**
+7. **Ejecuta la aplicación:**
     - Presiona **F5** o haz clic en **Iniciar depuración** en Visual Studio.
     - O bien, desde la terminal:
     ```bash
     dotnet run
     ```
-7. **Accede desde tu navegador:**
+8. **Accede desde tu navegador:**
     ```
     https://localhost:7028
     ```
-8. **Explora la documentación de la API:**
+9. **Explora la documentación de la API:**
     ```
     https://localhost:7241/swagger
     ```
