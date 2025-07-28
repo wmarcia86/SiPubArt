@@ -7,17 +7,32 @@ using Web.API.Controllers.Base;
 
 namespace Web.API.Controllers;
 
+/// <summary>
+/// Controller class for handling authentication-related API endpoints.
+/// Type: Controller
+/// Author: WMarcia
+/// Date: 2025-07-28
+/// </summary>
 [ApiController]
 [Route("api/auth")]
 public class AuthController : ApiController
 {
     private readonly ISender _mediator;
 
+    /// <summary>
+    /// Initializes a new instance of the <see cref="AuthController"/> class.
+    /// </summary>
+    /// <param name="mediator">The mediator instance for handling requests.</param>
     public AuthController(ISender mediator)
     {
         _mediator = mediator ?? throw new ArgumentNullException(nameof(mediator));
     }
 
+    /// <summary>
+    /// Registers a new user.
+    /// </summary>
+    /// <param name="command">The command containing user registration data.</param>
+    /// <returns>The result of the registration operation.</returns>
     [HttpPost("register")]
     public async Task<IActionResult> Register([FromBody] RegisterUserCommand command)
     { 
@@ -29,6 +44,11 @@ public class AuthController : ApiController
         );
     }
 
+    /// <summary>
+    /// Authenticates a user and returns user information.
+    /// </summary>
+    /// <param name="command">The command containing login credentials.</param>
+    /// <returns>The authenticated user or an error.</returns>
     [HttpPost("login")]
     public async Task<IActionResult> Login([FromBody] LoginUserCommand command)
     {
@@ -40,6 +60,10 @@ public class AuthController : ApiController
         );
     }
 
+    /// <summary>
+    /// Retrieves information about the currently authenticated user.
+    /// </summary>
+    /// <returns>The current user's information.</returns>
     [HttpGet("me")]
     [Authorize]
     public IActionResult Me()

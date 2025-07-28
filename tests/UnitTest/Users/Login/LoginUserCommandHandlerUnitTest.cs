@@ -6,6 +6,12 @@ using Moq;
 
 namespace UnitTest.Users.Login;
 
+/// <summary>
+/// Unit test class for testing the LoginUserCommandHandler logic.
+/// Type: Unit Test
+/// Author: WMarcia
+/// Date: 2025-07-28
+/// </summary>
 public class LoginUserCommandHandlerUnitTest
 {
     private readonly Mock<IUserRepository> _mokUserRepository;
@@ -13,13 +19,21 @@ public class LoginUserCommandHandlerUnitTest
 
     private readonly LoginUserCommandHandler _handler;
 
-    public LoginUserCommandHandlerUnitTest()     {
+    /// <summary>
+    /// Constructor.
+    /// Initializes a new instance of the <see cref="LoginUserCommandHandlerUnitTest"/> class.
+    /// </summary>
+    public LoginUserCommandHandlerUnitTest()
+    {
         _mokUserRepository = new Mock<IUserRepository>();
         _mokTokenGenerator = new Mock<ITokenGenerator>();
 
         _handler = new LoginUserCommandHandler(_mokUserRepository.Object, _mokTokenGenerator.Object);
     }
 
+    /// <summary>
+    /// Tests successful login with valid username and password.
+    /// </summary>
     [Fact]
     public async Task HandleLoginUser_Success()
     {
@@ -65,6 +79,9 @@ public class LoginUserCommandHandlerUnitTest
         Assert.Equal("mocked-jwt-token", response.Token);
     }
 
+    /// <summary>
+    /// Tests login failure when the username is invalid.
+    /// </summary>
     [Fact]
     public async Task HandleLoginUser_Fails_WhenUsernameIsInvalid()
     {
@@ -87,6 +104,9 @@ public class LoginUserCommandHandlerUnitTest
         Assert.Contains(result.Errors, e => e.Code == "User.Unauthorized");
     }
 
+    /// <summary>
+    /// Tests login failure when the password is invalid.
+    /// </summary>
     [Fact]
     public async Task HandleLoginUser_Fails_WhenPasswordIsInvalid()
     {
