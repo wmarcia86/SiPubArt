@@ -61,7 +61,7 @@ Sistema de Publicación de Artículos
 - **Application**: Lógica de negocio, CQRS, validaciones y casos de uso.
 - **Domain**: Entidades, Value Objects y lógica de dominio.
 - **Infrastructure**: Persistencia, servicios externos y configuración de base de datos.
-- **UnitTests**: Pruebas unitarias.
+- **UnitTest**: Pruebas unitarias.
 - **Web**: Proyecto web principal basado en Razor Pages (.NET 8).
 - **Web.API**: Proyecto principal de la API.
 
