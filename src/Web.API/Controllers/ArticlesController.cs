@@ -78,13 +78,29 @@ public class ArticlesController : ApiController
     /// <returns>A paged list of articles.</returns>
     [HttpGet]
     [Authorize]
-    [EnableQuery]
     public async Task<IActionResult> GetPaged([FromQuery] int pageNumber = 1, [FromQuery] int pageSize = 10)
     {
         var getPagedResult = await _mediator.Send(new GetPagedArticlesQuery(pageNumber, pageSize));
 
         return getPagedResult.Match(
             pagedArticles => Ok(pagedArticles),
+            errors => Problem(errors)
+        );
+    }
+
+    /// <summary>
+    /// Retrieves a list of all articles.
+    /// </summary>
+    /// <returns>A list of articles.</returns>
+    [HttpGet("odata")]
+    //[Authorize]
+    [EnableQuery]
+    public async Task<IActionResult> GetAllOData()
+    {
+        var getAllArticlesQueryResult = await _mediator.Send(new GetAllArticlesQuery());
+
+        return getAllArticlesQueryResult.Match(
+            articles => Ok(articles),
             errors => Problem(errors)
         );
     }
@@ -98,7 +114,6 @@ public class ArticlesController : ApiController
     /// <returns>A paged list of articles by the specified author.</returns>
     [HttpGet("author/{authorId}")]
     [Authorize]
-    [EnableQuery]
     public async Task<IActionResult> GetByAuthorId(Guid authorId, [FromQuery] int pageNumber = 1, [FromQuery] int pageSize = 10)
     {
         var role = "admin"; // User.Claims.FirstOrDefault(c => c.Type == System.Security.Claims.ClaimTypes.Role)?.Value;

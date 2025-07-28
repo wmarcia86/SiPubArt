@@ -127,32 +127,32 @@ Algunos endpoints de la API soportan consultas avanzadas mediante OData. Puedes 
 
 - **$select**: Selecciona campos específicos.
     ```
-    https://localhost:7028/api/articles?$select=title,author
+    https://localhost:7241/api/articles/odata?$select=title,author
     ```
 - **$filter**: Filtra resultados por una condición.
     ```
-    https://localhost:7028/api/articles?$filter=author eq 'wmarcia'
+    https://localhost:7241/api/articles/odata?$filter=author eq 'Wilbert Marcia'
     ```
 - **$orderby**: Ordena los resultados.
     ```
-    https://localhost:7028/api/articles?$orderby=createdAt desc
+    https://localhost:7241/api/articles/odata?$orderby=publicationDate desc
     ```
 - **$expand**: Incluye entidades relacionadas (por ejemplo, comentarios).
     ```
-    https://localhost:7028/api/articles?$expand=comments
+    https://localhost:7241/api/articles/odata?$expand=comments
     ```
 - **$count**: Devuelve el total de elementos.
     ```
-    https://localhost:7028/api/articles?$count=true
+    https://localhost:7241/api/articles/odata?$count=true
     ```
 - **$top**: Limita la cantidad máxima de resultados (hasta 100).
     ```
-    https://localhost:7028/api/articles?$top=100
+    https://localhost:7241/api/articles/odata?$top=100
     ```
 
 > Puedes combinar varias opciones en una misma consulta, por ejemplo:
 > ```
-> https://localhost:7028/api/articles?$select=title&$filter=author eq 'wmarcia'&$orderby=createdAt desc&$top=10&$count=true
+> https://localhost:7028/api/articles/odata?$select=title&$filter=author eq 'wmarcia'&$orderby=publicationDate desc&$top=10&$count=true
 > ```
 
 **Importante:**  

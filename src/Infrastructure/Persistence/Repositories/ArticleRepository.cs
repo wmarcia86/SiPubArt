@@ -58,6 +58,8 @@ public class ArticleRepository : IArticleRepository
     public async Task<List<Article>> GetAll() => 
         await _context.Articles
             .Include(article => article.Author)
+            .Include(article => article.Comments)
+                .ThenInclude(comment => comment.Author)
             .OrderByDescending(a => a.PublicationDate)
             .ToListAsync();
 
