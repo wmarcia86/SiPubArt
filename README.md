@@ -58,12 +58,12 @@ Sistema de Publicación de Artículos
 
 ## 📂 Estructura del Proyecto
 
-- **Web**: Proyecto web principal basado en Razor Pages (.NET 8).
-- **Web.API**: Proyecto principal de la API.
 - **Application**: Lógica de negocio, CQRS, validaciones y casos de uso.
 - **Domain**: Entidades, Value Objects y lógica de dominio.
 - **Infrastructure**: Persistencia, servicios externos y configuración de base de datos.
-- **Tests**: Pruebas unitarias.
+- **UnitTests**: Pruebas unitarias.
+- **Web**: Proyecto web principal basado en Razor Pages (.NET 8).
+- **Web.API**: Proyecto principal de la API.
 
 ## 🚀 Instalación y Ejecución
 
