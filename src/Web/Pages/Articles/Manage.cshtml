@@ -49,7 +49,7 @@
             }
 
             $.ajax({
-                url: apiUrl(`/api/articles?page=${page}&pageSize=${pageSize}`),
+                url: apiUrl(`/api/articles?pageNumber=${page}&pageSize=${pageSize}`),
                 method: 'GET',
                 headers: { 'Authorization': `Bearer ${token}` },
                 success: function (data) {
@@ -120,12 +120,14 @@
         $('#prevPageBtn').on('click', function () {
             if (currentPage > 1) {
                 currentPage--;
+
                 loadArticles(currentPage);
             }
         });
 
         $('#nextPageBtn').on('click', function () {
             currentPage++;
+
             loadArticles(currentPage);
         });
 
