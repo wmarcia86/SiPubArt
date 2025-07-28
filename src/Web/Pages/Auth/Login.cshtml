@@ -1,0 +1,288 @@
+﻿@page
+@model Web.Pages.Auth.LoginModel
+@{
+    ViewData["Title"] = "Login";
+    ViewData["HideMenu"] = true;
+
+    var baseUrl = $"{HttpContext.Request.Scheme}://{HttpContext.Request.Host}";
+}
+<div class="container-fluid">
+    <div class="row justify-content-center">
+        <div class="col-12 col-md-6 col-lg-7 mt-5">
+            <h1 class="text-primary fw-bold text-center">Bienvenido al</h1>
+            <h1 class="mb-5 text-primary fw-bold text-center">Sistema de Publicación de Artículos</h1>
+
+            <div class="text-center mb-4">
+                <img src="~/img/logo.png" alt="Logo" style="max-width: 120px; height: auto;" />
+            </div>
+
+            <form id="loginForm" class="text-center">
+                <div class="mb-4 d-flex align-items-center justify-content-center">
+                    <label for="username" class="me-3 fw-semibold" style="width: 100px; font-size: 1.25rem;">Usuario</label>
+                    <input id="username" type="text" maxlength="20" class="form-control form-control-lg" style="width: 250px;" required />
+                </div>
+                <div class="mb-4 d-flex align-items-center justify-content-center">
+                    <label for="password" class="me-3 fw-semibold" style="width: 100px; font-size: 1.25rem;">Contraseña</label>
+                    <input id="password" type="password" maxlength="50" class="form-control form-control-lg" style="width: 250px;" required />
+                </div>
+                <div class="d-flex justify-content-center mb-3">
+                    <button type="submit" class="btn btn-primary btn-lg px-5 me-3">Iniciar sesión</button>
+                    <button type="button" class="btn btn-outline-primary btn-lg px-5" data-bs-toggle="modal" data-bs-target="#registerModal">Regístrate</button>
+                </div>
+                <div id="errorMessage" class="alert alert-danger mt-4 d-none text-center"></div>
+            </form>
+        </div>
+    </div>
+</div>
+
+<div class="modal fade" id="registerModal" tabindex="-1" aria-labelledby="registerModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-lg">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="registerModalLabel">Registro de Nuevo Usuario</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Cerrar"></button>
+            </div>
+            <div class="modal-body">
+                <form id="registerForm">
+                    <div class="alert alert-info py-2 mb-4">
+                        <span class="fw-semibold text-danger">*</span> Campos obligatorios
+                    </div>
+                    <div class="mb-3 row align-items-center">
+                        <label for="regFirstName" class="col-4 col-form-label fw-semibold text-end">
+                            Nombre <span class="text-danger">*</span>
+                        </label>
+                        <div class="col-8">
+                            <input id="regFirstName" type="text" minlength="2" maxlength="50" class="form-control form-control-lg" required />
+                        </div>
+                    </div>
+                    <div class="mb-3 row align-items-center">
+                        <label for="regLastName" class="col-4 col-form-label fw-semibold text-end">
+                            Apellido <span class="text-danger">*</span>
+                        </label>
+                        <div class="col-8">
+                            <input id="regLastName" type="text" minlength="2" maxlength="50" class="form-control form-control-lg" required />
+                        </div>
+                    </div>
+                    <div class="mb-3 row align-items-center">
+                        <label for="regUsername" class="col-4 col-form-label fw-semibold text-end">
+                            Usuario <span class="text-danger">*</span>
+                        </label>
+                        <div class="col-8">
+                            <input id="regUsername" type="text" minlength="3" maxlength="20" class="form-control form-control-lg" required />
+                        </div>
+                    </div>
+                    <div class="mb-3 row align-items-center">
+                        <label for="regEmail" class="col-4 col-form-label fw-semibold text-end">
+                            Correo Electrónico <span class="text-danger">*</span>
+                        </label>
+                        <div class="col-8">
+                            <input id="regEmail" type="email" minlength="5" maxlength="254" class="form-control form-control-lg" required />
+                        </div>
+                    </div>
+                    <div class="mb-3 row align-items-center">
+                        <label for="regPassword" class="col-4 col-form-label fw-semibold text-end">
+                            Contraseña <span class="text-danger">*</span>
+                        </label>
+                        <div class="col-8">
+                            <input id="regPassword" type="password" minlength="8" maxlength="50" class="form-control form-control-lg" required />
+                        </div>
+                    </div>
+                    <div class="mb-4 row align-items-center">
+                        <label for="regConfirmPassword" class="col-4 col-form-label fw-semibold text-end">
+                            Repetir Contraseña <span class="text-danger">*</span>
+                        </label>
+                        <div class="col-8">
+                            <input id="regConfirmPassword" type="password" minlength="8" maxlength="50" class="form-control form-control-lg" required />
+                        </div>
+                    </div>
+                    <div class="d-flex justify-content-center mb-3">
+                        <button type="submit" class="btn btn-success btn-lg me-3 px-5">Registrar</button>
+                        <button type="button" class="btn btn-outline-primary btn-lg px-5" data-bs-dismiss="modal">Cancelar</button>
+                    </div>
+                    <div id="registerMessage" class="alert mt-4 d-none text-center"></div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    <script>
+        
+        $('#loginForm').on('submit', function (e) {
+            e.preventDefault();
+
+            var username = $('#username').val().trim();
+            var password = $('#password').val();
+
+            if (username.length < 3 || username.length > 20) {
+                $('#errorMessage')
+                    .removeClass('d-none')
+                    .text('Credenciales incorrectas');
+
+                return;
+            }
+
+            if (password.length < 8 || password.length > 50) {
+                $('#errorMessage')
+                    .removeClass('d-none')
+                    .text('Credenciales incorrectas');
+                
+                return;
+            }
+
+            $.ajax({
+                url: apiUrl('/api/auth/login'),
+                method: 'POST',
+                contentType: 'application/json',
+                data: JSON.stringify({
+                    username: $('#username').val(),
+                    password: $('#password').val()
+                }),
+                success: function (response) {
+                    localStorage.setItem('user', JSON.stringify(response));
+                    window.location.href = '/Main';
+                },
+                error: function () {
+                    $('#errorMessage').removeClass('d-none').text('Credenciales incorrectas');
+                }
+            });
+        });
+
+        $('#registerModal').on('show.bs.modal', function () {
+            $('#registerForm').trigger('reset');
+        
+            $('#registerMessage')
+                .addClass('d-none')
+                .removeClass('alert-success alert-danger')
+                .text('');
+        });
+
+        $('#registerForm').on('submit', function (e) {
+            e.preventDefault();
+
+            var isValid = true;
+
+            $('#registerForm input[required]').each(function () {
+                if (!$(this).val().trim()) {
+                    isValid = false;
+
+                    return false;
+                }
+            });
+
+            if (!isValid) {
+                $('#registerMessage')
+                    .removeClass('d-none alert-success')
+                    .addClass('alert-danger')
+                    .text('Todos los campos son obligatorios');
+
+                return;
+            }
+
+            var firstName = $('#regFirstName').val().trim();
+            var lastName = $('#regLastName').val().trim();
+            var username = $('#regUsername').val().trim();
+            var email = $('#regEmail').val().trim();
+            var password = $('#regPassword').val();
+            var confirmPassword = $('#regConfirmPassword').val();
+
+            if (firstName.length < 2 || firstName.length > 50) {
+                showRegisterError('El nombre debe tener entre 2 y 50 caracteres.');
+
+                return;
+            }
+
+            if (lastName.length < 2 || lastName.length > 50) {
+                showRegisterError('El apellido debe tener entre 2 y 50 caracteres.');
+
+                return;
+            }
+
+            if (username.length < 3 || username.length > 20) {
+                showRegisterError('El usuario debe tener entre 3 y 20 caracteres.');
+                
+                return;
+            }
+
+            if (email.length < 5 || email.length > 254) {
+                showRegisterError('El correo debe tener entre 5 y 254 caracteres.');
+               
+                return;
+            }
+
+            if (password.length < 8 || password.length > 50) {
+                showRegisterError('La contraseña debe tener entre 8 y 50 caracteres.');
+                
+                return;
+            }
+
+            if (password !== confirmPassword) {
+                showRegisterError('Las contraseñas no coinciden.');
+                
+                return;
+            }
+
+            var errors = [];
+            
+            if (!/[A-Z]/.test(password)) {
+                errors.push('La contraseña debe contener al menos una letra mayúscula.');
+            }
+
+            if (!/[a-z]/.test(password)) {
+                errors.push('La contraseña debe contener al menos una letra minúscula.');
+            }
+
+            if (!/\d/.test(password)) {
+                errors.push('La contraseña debe contener al menos un número.');
+            }
+
+            if (!/[\W_]/.test(password)) {
+                errors.push('La contraseña debe contener al menos un carácter especial.');
+            }
+
+            if (errors.length > 0) {
+                showRegisterError(errors.join('<br>'));
+            
+                return;
+            }
+
+            $.ajax({
+                url: apiUrl('/api/auth/register'),
+                method: 'POST',
+                contentType: 'application/json',
+                data: JSON.stringify({
+                    username: username,
+                    email: email,
+                    firstName: firstName,
+                    lastName: lastName,
+                    password: password
+                }),
+                success: function () {
+                    $('#registerMessage')
+                        .removeClass('d-none alert-danger')
+                        .addClass('alert-success')
+                        .text('Usuario registrado exitosamente');
+
+                    setTimeout(function () {
+                        var modal = bootstrap.Modal.getOrCreateInstance(document.getElementById('registerModal'));
+                        modal.hide();
+                    }, 2000);
+                },
+                error: function () {
+                    $('#registerMessage')
+                        .removeClass('d-none alert-success')
+                        .addClass('alert-danger')
+                        .text('Error al registrar usuario');
+                }
+            });
+        });
+
+        function showRegisterError(msg) {
+            $('#registerMessage')
+                .removeClass('d-none alert-success')
+                .addClass('alert-danger')
+                .html(msg);
+        }
+    </script>
+}

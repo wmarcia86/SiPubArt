@@ -1,0 +1,169 @@
+﻿@page "{id}"
+@model Web.Pages.Article.DetailsModel
+@{
+    ViewData["Title"] = "Detalle del Artículo";
+}
+
+<div class="container my-5">
+    <div class="container my-5">
+        <div class="row">
+            <div class="col-12">
+                <h2 id="articleTitle" class="fw-bold text-primary mb-3 text-center text-md-start"></h2>
+                <h5 id="articleMeta" class="text-muted mb-4 text-center text-md-start"></h5>
+            </div>
+        </div>
+
+        <div class="row">
+            <div class="col-12">
+                <p id="articleContent" class="lead"></p>
+            </div>
+        </div>
+
+        <div class="row my-4">
+            <div class="col-12 text-center">
+                <button id="toggleCommentsBtn" class="btn btn-outline-primary">Mostrar Comentarios</button>
+            </div>
+        </div>
+
+        <div id="commentsSectionContainer" class="d-none">
+            <h4 id="commentsTitle" class="mb-4">Comentarios (0)</h4>
+
+            <div class="row mb-4 align-items-center">
+                <div class="col-12 col-md-9">
+                    <textarea id="commentText" class="form-control" rows="2" placeholder="Escribe tu comentario aquí..." minlength="10" maxlength="1000" required></textarea>
+                </div>
+                <div class="col-12 col-md-3 mt-3 mt-md-0 d-grid d-md-flex justify-content-md-end">
+                    <button id="submitPublishBtn" class="btn btn-primary">Publicar</button>
+                </div>
+            </div>
+
+            <div id="commentMessage" class="alert mt-3 d-none text-center"></div>
+
+            <div id="commentsList">
+            </div>     
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    <script>
+        if (!localStorage.getItem('user')) {
+            window.location.href = '/Auth/Login';
+        }
+    </script>
+
+    <script>
+        const articleId = '@Model.ArticleId';
+        let commentsVisible = false;
+
+        function loadArticleDetails() {
+            const user = JSON.parse(localStorage.getItem('user'));
+            const token = user?.token;
+
+            if (!token) {
+                alert('No estás autenticado');
+
+                return;
+            }
+
+            $.ajax({
+                url: apiUrl(`/api/articles/${articleId}`),
+                method: 'GET',
+                headers: {
+                    'Authorization': `Bearer ${token}`
+                },
+                success: function (data) {                   
+                    $('#articleTitle').text(data.title);
+                    $('#articleMeta').text(`${data.author} - ${formatDate(data.publicationDate)}`);
+                    $('#articleContent').html(
+                        data.content ? data.content.replace(/\n/g, '<br>') : ''
+                    );
+                    
+                    renderComments(data.comments);
+                },
+                error: function () {
+                    alert('Error al cargar el artículo');
+                }
+            });
+        }
+
+        function renderComments(comments) {
+            $('#commentsList').empty();
+
+            $('#commentsTitle').text(`Comentarios (${comments.length})`);
+
+            if (comments.length === 0) {
+                $('#commentsList').append('<hr>');
+                $('#commentsList').append('<p>No hay comentarios aún.</p>');
+            } else {
+                comments.forEach(comment => {
+                    const contentWithBreaks = comment.content
+                        ? comment.content.replace(/\n/g, '<br>')
+                        : '';
+
+                    $('#commentsList').append(`
+                        <hr>
+                        <div class="border rounded p-3 mb-3">
+                            Publicado por <strong>${comment.author}</strong> el <small class="text-muted">${formatDate(comment.publicationDate)}</small>
+                            <p class="mb-0">${contentWithBreaks}</p>
+                        </div>
+                    `);
+                });
+            }
+        }
+
+        $('#toggleCommentsBtn').on('click', function () {
+            commentsVisible = !commentsVisible;
+
+            if (commentsVisible) {
+                $('#commentsSectionContainer').removeClass('d-none');
+                $(this).text('Ocultar Comentarios');
+            } else {
+                $('#commentsSectionContainer').addClass('d-none');
+                $(this).text('Mostrar Comentarios');
+            }
+        });
+
+        $('#submitPublishBtn').on('click', function () {
+            const user = JSON.parse(localStorage.getItem('user'));
+            const authorId = user?.id;
+            const token = user?.token;
+
+            const commentContent = $('#commentText').val().trim();
+
+            if (commentContent.length < 10 || commentContent.length > 1000) {
+                $('#commentMessage')
+                    .removeClass('d-none alert-success')
+                    .addClass('alert-danger')
+                    .text('El comentario debe tener entre 10 y 1000 caracteres.');
+                
+                return;
+            }
+
+            $.ajax({
+                url: apiUrl(`/api/articles/${articleId}/comments`),
+                method: 'POST',
+                headers: { 'Authorization': `Bearer ${token}` },
+                contentType: 'application/json',
+                data: JSON.stringify({ articleId: articleId, content: commentContent, authorId: authorId }),
+                success: function () {
+                    $('#commentMessage').removeClass('d-none alert-danger').addClass('alert-success').text('Comentario agregado');
+                    $('#commentText').val('');
+
+                    setTimeout(() => {
+                        $('#commentMessage').addClass('d-none');
+                    }, 2000);
+
+                    loadArticleDetails();
+                },
+                error: function () {
+                    $('#commentMessage').removeClass('d-none alert-success').addClass('alert-danger').text('Error al agregar comentario');
+                }
+            });
+        });
+
+        $(document).ready(function () {
+            loadArticleDetails();
+        });
+    </script>
+}

@@ -1,0 +1,123 @@
+﻿@page "{id?}"
+@model Web.Pages.Article.EditModel
+@{
+    ViewData["Title"] = Model.ArticleId == null ? "Crear Artículo" : "Editar Artículo";
+}
+<div class="container my-5">
+    <h2 class="mb-4 fw-bold text-center">@ViewData["Title"]</h2>
+
+    <form id="articleForm">
+        <div class="mb-3">
+            <label for="title" class="form-label fw-semibold">Título</label>
+            <input type="text" id="title" class="form-control" minlength="3" maxlength="200" required />
+        </div>
+        <div class="mb-3">
+            <label for="content" class="form-label fw-semibold">Contenido</label>
+            <textarea id="content" class="form-control" rows="6" minlength="10" maxlength="10000" required ></textarea>
+        </div>
+        <div class="d-grid d-md-flex justify-content-md-end">
+            <button type="submit" class="btn btn-success px-5 me-3">Guardar</button>
+            <a href="/Articles/Manage" class="btn btn-outline-secondary px-5">Cancelar</a>
+        </div>
+        <div id="formMessage" class="alert mt-3 d-none text-center"></div>
+    </form>
+</div>
+
+@section Scripts {
+    <script>
+        const articleId = "@Model.ArticleId";
+
+
+        $(document).ready(function () {
+            if (articleId) {
+                loadArticleDetails(articleId);
+            }
+
+            $('#articleForm').on('submit', function (e) {
+                e.preventDefault();
+
+                saveArticle();
+            });
+        });
+
+        function loadArticleDetails(id) {
+            const user = JSON.parse(localStorage.getItem('user'));
+            const token = user?.token;
+
+            $.ajax({
+                url: apiUrl(`/api/articles/${id}`),
+                method: 'GET',
+                headers: { 'Authorization': `Bearer ${token}` },
+                success: function (data) {
+                    $('#title').val(data.title);
+                    $('#content').val(data.content);
+                },
+                error: function () {
+                    alert('Error al cargar el artículo');
+                }
+            });
+        }
+
+        function saveArticle() {
+            const user = JSON.parse(localStorage.getItem('user'));
+            const token = user?.token;
+
+            const title = $('#title').val().trim();
+            const content = $('#content').val().trim();
+            const authorId = user?.id;
+
+            if (title.length < 3 || title.length > 200) {
+                $('#commentMessage')
+                    .removeClass('d-none alert-success')
+                    .addClass('alert-danger')
+                    .text('El comentario debe tener entre 3 y 200 caracteres.');
+
+                return;
+            }
+
+            if (content.length < 10 || content.length > 10000) {
+                $('#commentMessage')
+                    .removeClass('d-none alert-success')
+                    .addClass('alert-danger')
+                    .text('El comentario debe tener entre 10 y 10000 caracteres.');
+
+                return;
+            }
+
+            const createPayload = {
+                title: title,
+                content: content,
+                authorId: authorId
+            };
+
+            const updatePayload = {
+                id: articleId,
+                title: title,
+                content: content
+            };
+
+            const method = articleId ? 'PUT' : 'POST';
+            const url = apiUrl(`/api/articles${articleId ? '/' + articleId : ''}`);
+
+            $.ajax({
+                url: url,
+                method: method,
+                headers: { 'Authorization': `Bearer ${token}` },
+                contentType: 'application/json',
+                data: JSON.stringify(articleId ? updatePayload : createPayload),
+                success: function () {
+                    $('#formMessage').removeClass('d-none alert-danger').addClass('alert-success').text('Artículo guardado correctamente');
+                    
+                    if (!articleId) {
+                        $('#articleForm')[0].reset();
+                    }
+
+                    setTimeout(() => window.location.href = '/Articles/Manage', 2000);
+                },
+                error: function () {
+                    $('#formMessage').removeClass('d-none alert-success').addClass('alert-danger').text('Error al guardar el artículo');
+                }
+            });
+        }
+    </script>
+}

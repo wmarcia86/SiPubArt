@@ -1,0 +1,136 @@
+﻿@page
+@model Web.Pages.Article.ManageModel
+@{
+    ViewData["Title"] = "Gestión de Artículos";
+}
+<div class="container my-5">
+    <h2 class="mb-4 fw-bold">Gestión de artículos</h2>
+
+    <div class="d-flex justify-content-end mb-3">
+        <a href="/Articles/Edit" class="btn btn-primary">Nuevo artículo</a>
+    </div>
+
+    <div class="table-responsive">
+        <table class="table table-bordered align-middle">
+            <thead class="table-light">
+                <tr>
+                    <th>Autor</th>
+                    <th>Título</th>
+                    <th>Fecha de publicación</th>
+                    <th class="text-center">Acciones</th>
+                </tr>
+            </thead>
+            <tbody id="articlesTableBody">
+            </tbody>
+        </table>
+    </div>
+
+    <div class="d-flex justify-content-center mt-4">
+        <button id="prevPageBtn" class="btn btn-outline-primary me-2" disabled>Página anterior</button>
+        <button id="nextPageBtn" class="btn btn-outline-primary">Página siguiente</button>
+    </div>
+</div>
+
+@section Scripts {
+    <script>
+        let user = null;
+
+        let currentPage = 1;
+        const pageSize = 10;
+
+        function loadArticles(page) {
+            user = JSON.parse(localStorage.getItem('user'));
+            const token = user?.token;
+
+            if (!token) {
+                alert('No estás autenticado');
+
+                return;
+            }
+
+            $.ajax({
+                url: apiUrl(`/api/articles?page=${page}&pageSize=${pageSize}`),
+                method: 'GET',
+                headers: { 'Authorization': `Bearer ${token}` },
+                success: function (data) {
+                    renderArticlesTable(data.articles);
+                    updatePagination(data.totalCount, data.pageNumber, data.pageSize);
+                },
+                error: function () {
+                    alert('Error al cargar artículos');
+                }
+            });
+        }
+
+        function renderArticlesTable(articles) {
+            const tbody = $('#articlesTableBody');
+            tbody.empty();
+
+            if (articles.length === 0) {
+                tbody.append('<tr><td colspan="4" class="text-center">No hay artículos disponibles.</td></tr>');
+            } else {
+                articles.forEach(article => {
+                    let actionButtons = `<a href="/Articles/Details/${article.id}" class="btn btn-sm btn-secondary me-2">Ver detalle</a>`;
+
+                    if (user.role === 'Admin' || (user.role === 'User' && article.authorId === user.id)) {
+                        actionButtons += `
+                            <a href="/Articles/Edit/${article.id}" class="btn btn-sm btn-warning me-2">Editar</a>
+                            <button class="btn btn-sm btn-danger" onclick="deleteArticle('${article.id}')">Eliminar</button>
+                        `;
+                    }
+
+                    tbody.append(`
+                        <tr>
+                            <td>${article.author}</td>
+                            <td>${article.title}</td>
+                            <td>${formatDate(article.publicationDate)}</td>
+                            <td class="text-center">${actionButtons}</td>
+                        </tr>
+                    `);
+                });
+            }
+        }
+
+        function deleteArticle(articleId) {
+            const token = user?.token;
+
+            if (confirm('¿Estás seguro de eliminar este artículo?')) {
+                $.ajax({
+                    url: apiUrl(`/api/articles/${articleId}`),
+                    method: 'DELETE',
+                    headers: { 'Authorization': `Bearer ${token}` },
+                    success: function () {
+                        alert('Artículo eliminado');
+                        loadArticles(currentPage);
+                    },
+                    error: function () {
+                        alert('Error al eliminar el artículo');
+                    }
+                });
+            }
+        }
+
+        function updatePagination(totalCount, pageNumber, pageSize) {
+            const totalPages = Math.ceil(totalCount / pageSize);
+
+            $('#prevPageBtn').prop('disabled', pageNumber === 1);
+            $('#nextPageBtn').prop('disabled', pageNumber >= totalPages);
+        }
+
+        $('#prevPageBtn').on('click', function () {
+            if (currentPage > 1) {
+                currentPage--;
+                loadArticles(currentPage);
+            }
+        });
+
+        $('#nextPageBtn').on('click', function () {
+            currentPage++;
+            loadArticles(currentPage);
+        });
+
+        $(document).ready(function () {
+            loadArticles(currentPage);
+        });
+    </script>
+}
