@@ -1,6 +1,6 @@
 [
   {
-    "Name": "Nuevo perfil",
+    "Name": "Startup profile",
     "Projects": [
       {
         "Path": "src\\Web.API\\Web.API.csproj",
