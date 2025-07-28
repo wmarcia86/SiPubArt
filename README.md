@@ -152,7 +152,7 @@ Algunos endpoints de la API soportan consultas avanzadas mediante OData. Puedes 
 
 > Puedes combinar varias opciones en una misma consulta, por ejemplo:
 > ```
-> https://localhost:7028/api/articles/odata?$select=title&$filter=author eq 'wmarcia'&$orderby=publicationDate desc&$top=10&$count=true
+> https://localhost:7241/api/articles/odata?$select=title&$filter=author eq 'Wilbert Marcia'&$orderby=publicationDate desc&$top=10&$count=true
 > ```
 
 **Importante:**  

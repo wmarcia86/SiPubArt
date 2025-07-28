@@ -93,7 +93,7 @@ public class ArticlesController : ApiController
     /// </summary>
     /// <returns>A list of articles.</returns>
     [HttpGet("odata")]
-    //[Authorize]
+    [Authorize]
     [EnableQuery]
     public async Task<IActionResult> GetAllOData()
     {
