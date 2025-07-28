@@ -156,7 +156,7 @@ Algunos endpoints de la API soportan consultas avanzadas mediante OData. Puedes 
 > ```
 
 **Importante:**  
-Para consumir estos endpoints, debes incluir un **token JWT** válido en la cabecera de la petición HTTP:
+Para consumir estos endpoints, debes incluir un **token JWT** válido en la cabecera de la petición HTTP.
 
 ## 👤 Autor
 Ing. Wilbert Antonio Marcia Lanzas | Nicaragua | 2025
