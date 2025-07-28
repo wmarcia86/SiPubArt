@@ -84,7 +84,7 @@ Sistema de Publicación de Artículos
     - Haz clic derecho sobre la solución en el **Explorador de soluciones** y selecciona **Propiedades de la solución**.
     - Ve a la sección __Propiedades comunes > Configurar Proyectos de inicio__.
     - Selecciona la opción **Varios proyectos de inicio** (__Multiple startup projects__).
-    - Verifica y selecciona el perfil __Startup profile.
+    - Verifica y selecciona el perfil __Startup profile__.
     - Haz clic en **Aceptar** para guardar los cambios.
 5. **Restaura las dependencias:**
     - Visual Studio restaurará automáticamente los paquetes al abrir la solución.
